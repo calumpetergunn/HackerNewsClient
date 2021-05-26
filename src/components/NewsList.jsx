@@ -1,32 +1,25 @@
 import NewsListItem from './NewsListItem'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function NewsList({loaded, recentStories}) {
-  const [commentsLoaded, setCommentsLoaded] = useState(false);
-  // const [comments, setComments] = useState({});
+function NewsList({loaded, recentStories, onCommentButtonClick}) {
+  // const [commentsLoaded, setCommentsLoaded] = useState(false);
+  // const [comments, setComments] = useState([]);
 
   if(!loaded) {
     return <p>Loading...</p>
   }
 
   const NewsListItemNode = recentStories.map((story) => {
-    let comments = []
-    if (story.kids) {
-       comments.push(story.kids.map((commentId) => {
-        return fetch(`https://hacker-news.firebaseio.com/v0/item/${commentId}.json`)
-        .then((response) => response.json())
-        .then((data) => (data));
-      })
-       )
-    } 
-  
     return <NewsListItem
     title={story.title}
     by={story.by}
     score={story.score}
     url={story.url}
-    comments={comments}
+    kids={story.kids}
     key={story.id}
+    onCommentButtonClick={(commentIdsToGet) => {
+      onCommentButtonClick(commentIdsToGet);
+      }}
     />;
   })
   
